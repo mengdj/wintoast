@@ -1,7 +1,7 @@
 # wintoast
 
-ÒòÒµÎñÏîÄ¿ĞèÒªÅª¸öwindowsµÄtoastÌáĞÑ£¬Ä³ÍøËÑË÷ÁË°ëÌìÃ»ÕÒµ½£¬Ë÷ĞÔ×Ô¼ºÅªÒ»¸ö£¬¹¦ÄÜ±È½Ï¼òµ¥£¬²»Ï²ÎğÅçµ÷ÓÃ±È½Ï¼òµ¥£¬¾Í3²½
-1.³õÊ¼»¯
+å› ä¸šåŠ¡é¡¹ç›®éœ€è¦å¼„ä¸ªwindowsçš„toastæé†’ï¼ŒæŸç½‘æœç´¢äº†åŠå¤©æ²¡æ‰¾åˆ°ï¼Œç´¢æ€§è‡ªå·±å¼„ä¸€ä¸ªï¼ŒåŠŸèƒ½æ¯”è¾ƒç®€å•ï¼Œä¸å–œå‹¿å–·è°ƒç”¨æ¯”è¾ƒç®€å•ï¼Œå°±3æ­¥
+1.åˆå§‹åŒ–
 ```c++
 xmstudio::TOAST_CFG cfg = { 0 };
 cfg.hinstance = hInstance;
@@ -10,22 +10,20 @@ cfg.font.color = RGB(255, 255, 255);
 cfg.font.height = 14;
 cfg.width = 250;
 cfg.height = 40;
-cfg.font.name = TEXT("ËÎÌå");
+cfg.font.name = TEXT("å®‹ä½“");
 cfg.background.alpha = 1000;
 cfg.background.color = RGB(0, 122, 204);
 cfg.background.translate_color = 0;
 cfg.background.translate_flags = LWA_ALPHA;
 xmstudio::toast::init(cfg);
 ```
-2.µ÷ÓÃ
+2.è°ƒç”¨
 ```c++
-xmstudio::toast::show(hWnd, TEXT("Í£Áô1.5Ãë(´°¿Ú1)"), 1500, 0, 0);
+xmstudio::toast::show(hWnd, TEXT("åœç•™1.5ç§’(çª—å£1)"), 1500, 0, 0);
 ```
-3.¼ÇµÃÒªÊÍ·Å×ÊÔ´Å¶
+3.è®°å¾—è¦é‡Šæ”¾èµ„æºå“¦
 ```c++
 xmstudio::toast::destory();
 ```
 
 <img src="https://raw.githubusercontent.com/mengdj/wintoast/master/Release/GIF.gif" width="75%"/>
-
-
