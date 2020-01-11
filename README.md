@@ -26,4 +26,4 @@ xmstudio::toast::show(hWnd, TEXT("停留1.5秒(窗口1)"), 1500, 0, 0);
 xmstudio::toast::destory();
 ```
 
-<img src="https://raw.githubusercontent.com/mengdj/wintoast/master/Release/GIF.gif" width="75%"/>
+<img src="https://raw.githubusercontent.com/mengdj/wintoast/master/Release/GIF.gif" width="45%"/>
