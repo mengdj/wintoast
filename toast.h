@@ -5,6 +5,7 @@
 #include <cassert>
 #include <chrono>
 #include <atomic>
+#define WM_VIRTUAL_DESTORY	(WM_USER+1)
 
 namespace xmstudio {
 	typedef struct _TOAST_MSG_ {
@@ -36,7 +37,7 @@ namespace xmstudio {
 		} background;
 	} TOAST_CFG;
 
-	class toast :public concurrency::agent {
+	class toast {
 	public:
 		~toast();
 		int loop();
@@ -50,7 +51,6 @@ namespace xmstudio {
 		static bool show(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, int offset_x = 0, int offset_y = 0);
 		static bool destory();
 	public:
-		HINSTANCE hinstance;
 		HWND hwnd;
 		concurrency::unbounded_buffer<std::shared_ptr<TOAST_MSG>> m_msg_queue;
 		TOAST_CFG cfg;
@@ -59,11 +59,13 @@ namespace xmstudio {
 		WNDPROC m_old_proc;
 		std::wstring m_msg_body;
 		const wchar_t *m_p_class_name = TEXT("xmstudio.toast");
-		bool m_nc_created;
+		bool m_nc_create;
+		bool m_create;
 		HFONT font;
 		HBRUSH brush;
 		HDC mem_dc;
 		HBITMAP mem_com_bitmap;
+		int m_reg;
 	private:
 		toast();
 		static concurrency::critical_section cs;
