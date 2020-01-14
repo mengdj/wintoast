@@ -115,13 +115,13 @@ LRESULT CALLBACK  xmstudio::toast::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 			if (nullptr != p_tmp_toast) {
 				p_tmp_toast->hwnd = hWnd;
 				p_tmp_toast->m_old_proc = (WNDPROC)::GetWindowLong(hWnd, GWL_WNDPROC);
-				SetWindowLong(hWnd, GWL_USERDATA, (LONG)p_tmp_toast);
+				::SetWindowLong(hWnd, GWL_USERDATA, (LONG)p_tmp_toast);
 				return p_tmp_toast->dispatch(uMsg, wParam, lParam);
 			}
 		}
 	}
 	else {
-		auto p_tmp_toast = reinterpret_cast<xmstudio::toast*>(GetWindowLong(hWnd, GWL_USERDATA));
+		auto p_tmp_toast = reinterpret_cast<xmstudio::toast*>(::GetWindowLong(hWnd, GWL_USERDATA));
 		if (nullptr != p_tmp_toast) {
 			return p_tmp_toast->dispatch(uMsg, wParam, lParam);
 		}
@@ -149,7 +149,7 @@ void xmstudio::toast::run() {
 			while (std::getline(wss, item)) {
 				if (!item.empty()) {
 					TOAST_SHOW tmp_show = { 0 };
-					if (TRUE == GetTextExtentPoint32(mem_dc, item.c_str(), item.size(), &tmp_show.size)) {
+					if (TRUE == ::GetTextExtentPoint32(mem_dc, item.c_str(), item.size(), &tmp_show.size)) {
 						tmp_show.str = item;
 						tmp_show.size.cy += cfg.spacing;
 						tmp_show.x = tmp_show.size.cx >> 1;
@@ -208,7 +208,7 @@ int xmstudio::toast::loop() {
 	WNDCLASSEXW wcex;
 	ZeroMemory(&wcex, sizeof(WNDCLASSEXW));
 	wcex.cbSize = sizeof(WNDCLASSEX);
-	m_reg = m_reg ? m_reg : GetClassInfoEx(cfg.hinstance, m_p_class_name, &wcex);
+	m_reg = m_reg ? m_reg : (::GetClassInfoEx(cfg.hinstance, m_p_class_name, &wcex));
 	if (!m_reg) {
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc = xmstudio::toast::proc;
@@ -216,7 +216,7 @@ int xmstudio::toast::loop() {
 		wcex.cbWndExtra = 0;
 		wcex.hInstance = cfg.hinstance;
 		wcex.hIcon = nullptr;
-		wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+		wcex.hCursor = ::LoadCursor(nullptr, IDC_ARROW);
 		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 		wcex.lpszMenuName = nullptr;
 		wcex.lpszClassName = m_p_class_name;
@@ -226,7 +226,7 @@ int xmstudio::toast::loop() {
 	if (m_reg) {
 		if (!m_create) {
 			CREATESTRUCT cs;
-			ZeroMemory(&cs, sizeof(CREATESTRUCT));
+			::ZeroMemory(&cs, sizeof(CREATESTRUCT));
 			cs.lpCreateParams = (LPVOID)this;
 			cs.hInstance = cfg.hinstance;
 			cs.hMenu = nullptr;
@@ -239,7 +239,7 @@ int xmstudio::toast::loop() {
 			cs.lpszName = m_p_class_name;
 			cs.lpszClass = m_p_class_name;
 			cs.dwExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW;
-			hwnd = CreateWindowEx(cs.dwExStyle, cs.lpszName, cs.lpszClass, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
+			hwnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszName, cs.lpszClass, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
 			if (nullptr != hwnd) {
 				m_create = true;
 				//ppl
@@ -252,7 +252,7 @@ int xmstudio::toast::loop() {
 						::DeleteObject(font);
 						font = nullptr;
 					}
-					font = CreateFont(cfg.font.height, cfg.font.width, 0, 0, FW_THIN, 0, 0, 0,
+					font = ::CreateFont(cfg.font.height, cfg.font.width, 0, 0, FW_THIN, 0, 0, 0,
 						GB2312_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 						DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, cfg.font.name);
 				}, [this]() {
@@ -294,9 +294,9 @@ int xmstudio::toast::loop() {
 					_this_->run();
 				}, nullptr);
 				MSG msg;
-				while (GetMessage(&msg, nullptr, 0, 0)) {
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
+				while (::GetMessage(&msg, nullptr, 0, 0)) {
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
 				}
 				return (int)msg.wParam;
 			}
