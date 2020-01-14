@@ -5,35 +5,55 @@
 #include <cassert>
 #include <chrono>
 #include <atomic>
-#define WM_VIRTUAL_DESTORY	(WM_USER+1)
+#include <sstream>
 
 namespace xmstudio {
+	enum class Align {
+		left,
+		center,
+		right,
+	};
+	typedef struct _TOAST_SHOW_ {
+		int i;
+		int x;
+		int y;
+		SIZE size;
+		std::wstring str;
+	} TOAST_SHOW;
+
 	typedef struct _TOAST_MSG_ {
 		int id;
 		bool done;
 		int x;
 		int y;
+		int offset_x;							//可调整位置
+		int offset_y;							//
 		int cx;
 		int cy;
-		long long dur;
-		std::wstring msg;
+		Align align;							//内容水平对齐方式
+		long long dur;							//持续时间，以毫秒计算
+		std::wstring msg;						//完整的未拆分的消息
+		std::vector<TOAST_SHOW> multi_msg;
+		HWND owner_hwnd;						//归属窗口
 	} TOAST_MSG;
 
 	typedef struct _TOAST_CFG_ {
-		HINSTANCE hinstance;
-		int width;
-		int height;
+		HINSTANCE hinstance;					//实例
+		int width;								//宽度，若为0则根据内容宽度自适应+padding	
+		int height;								//高度，若为0则根据内容宽度自适应+padding	
+		int padding;							//内容边距，仅width或height自动计算时才生效
+		int spacing;							//多行内容时的行与行之间的间距
 		struct {
 			int width;
 			int height;
 			COLORREF color;
-			wchar_t* name;
+			wchar_t* name;						//字体名称（需操作系统已安装的人字体）
 		} font;
 		struct {
-			BYTE alpha;
-			COLORREF color;
-			COLORREF translate_color;
-			DWORD translate_flags;
+			BYTE alpha;							//透明度
+			COLORREF color;						//窗口背景色
+			COLORREF translate_color;			//指定透明色
+			DWORD translate_flags;				//透明模式 LWA_COLORKEY LWA_ALPHA
 		} background;
 	} TOAST_CFG;
 
@@ -46,25 +66,25 @@ namespace xmstudio {
 		LRESULT CALLBACK dispatch(UINT, WPARAM, LPARAM);
 		LRESULT CALLBACK default_proc(HWND, UINT, WPARAM, LPARAM);
 		bool release();
-		bool notify(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, int offset_x = 0, int offset_y = 0);
+		bool notify(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, Align align = Align::center, int offset_x = 0, int offset_y = 0);
+		BOOL visible();
 		static void init(const TOAST_CFG& cfg);
-		static bool show(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, int offset_x = 0, int offset_y = 0);
+		static bool show(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, Align align = Align::center, int offset_x = 0, int offset_y = 0);
 		static bool destory();
 	public:
 		HWND hwnd;
 		concurrency::unbounded_buffer<std::shared_ptr<TOAST_MSG>> m_msg_queue;
 		TOAST_CFG cfg;
 	protected:
-		std::atomic<long long> m_msg_ms;
 		WNDPROC m_old_proc;
-		std::wstring m_msg_body;
+		std::shared_ptr<TOAST_MSG> m_msg;
 		const wchar_t *m_p_class_name = TEXT("xmstudio.toast");
 		bool m_nc_create;
 		bool m_create;
 		HFONT font;
 		HBRUSH brush;
+		HBITMAP m_mem_bitmap;
 		HDC mem_dc;
-		HBITMAP mem_com_bitmap;
 		int m_reg;
 	private:
 		toast();
