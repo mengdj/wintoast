@@ -309,7 +309,6 @@ int xmstudio::toast::loop() {
 							}
 						}
 					}
-
 				});
 				concurrency::timer<int> tmp_timer(100, 0, &tmp_call, true);
 				tmp_timer.start();

@@ -6,7 +6,10 @@
 #include <chrono>
 #include <atomic>
 #include <sstream>
-
+/**
+* wintoast
+* @author mengdj@outlook.com
+*/
 namespace xmstudio {
 	enum class Align {
 		left,
