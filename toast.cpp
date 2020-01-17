@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "Toast.h"
-//#include <plog\Log.h>
 std::shared_ptr<xmstudio::toast> xmstudio::toast::_this_ = nullptr;
 concurrency::critical_section xmstudio::toast::cs;
 
 xmstudio::toast::toast() :m_nc_create(false), font(nullptr), mem_dc(nullptr), brush(nullptr), m_create(false), m_reg(0) {
-	//plog::init(plog::Severity::debug, "xx.txt");
 	m_msg = nullptr;
 	m_mem_bitmap = nullptr;
 }
@@ -195,6 +193,7 @@ void xmstudio::toast::run() {
 						if (m_msg->cx != toast_radius.x2 || m_msg->cy != toast_radius.y2) {
 							//build
 							::SetWindowRgn(hwnd, nullptr, FALSE);
+							//In particular, do not delete this region handle. The system deletes the region handle when it no longer needed.
 							auto tmp_rgn = ::CreateRoundRectRgn(0, 0, m_msg->cx, m_msg->cy, cfg.radius.width, cfg.radius.height);
 							if (nullptr != tmp_rgn) {
 								if (::SetWindowRgn(hwnd, tmp_rgn, TRUE)) {

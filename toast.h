@@ -13,6 +13,7 @@ namespace xmstudio {
 		center,
 		right,
 	};
+
 	typedef struct _TOAST_SHOW_ {
 		int i;
 		int x;
@@ -53,13 +54,13 @@ namespace xmstudio {
 		int padding;							//内容边距，仅width或height自动计算时才生效
 		int spacing;							//多行内容时的行与行之间的间距
 		struct {
-			int width;
-			int height;
+			int width;							//圆角宽度，默认5
+			int height;							//圆角高度，默认5
 		} radius;								//圆角
 		struct {
-			int width;
-			int height;
-			COLORREF color;
+			int width;							//字体宽度
+			int height;							//字体高度
+			COLORREF color;						//字体颜色
 			wchar_t* name;						//字体名称（需操作系统已安装的人字体）
 		} font;
 		struct {
