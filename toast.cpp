@@ -284,7 +284,7 @@ int xmstudio::toast::loop() {
 						::DeleteObject(brush);
 						brush = nullptr;
 					}
-					brush = CreateSolidBrush(cfg.background.color);
+					brush = ::CreateSolidBrush(cfg.background.color);
 					if (nullptr != m_mem_bitmap) {
 						::DeleteObject(m_mem_bitmap);
 						m_mem_bitmap = nullptr;
@@ -328,10 +328,10 @@ int xmstudio::toast::loop() {
 				LOGD << GetLastError();
 #endif // LOGD
 			}
-			}
 		}
-	return 0;
 	}
+	return 0;
+}
 
 bool xmstudio::toast::release() {
 	m_create = m_nc_create = false;
