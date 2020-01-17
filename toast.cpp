@@ -128,6 +128,7 @@ LRESULT CALLBACK  xmstudio::toast::proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 	}
 	return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
+
 /**
 	运行消息计算(计算并负责刷新窗口)
 */
@@ -135,6 +136,7 @@ void xmstudio::toast::run() {
 	std::wstringstream wss;
 	std::wstring item;
 	RECT ref_rect = { 0 };
+	TOAST_RADIUS toast_radius = { 0 };
 	while (1) {
 		if (nullptr != mem_dc) {
 			m_msg.swap(concurrency::receive(m_msg_queue));
@@ -186,10 +188,29 @@ void xmstudio::toast::run() {
 							m_msg->y += tmp_point.y >> 1;
 						}
 					}
-
-					::SetWindowPos(hwnd, HWND_TOP, m_msg->x, m_msg->y, m_msg->cx, m_msg->cy, SWP_SHOWWINDOW);
+					//HWND_TOPMOST
+					::SetWindowPos(hwnd, HWND_TOPMOST, m_msg->x, m_msg->y, m_msg->cx, m_msg->cy, SWP_SHOWWINDOW);
+					//radius
+					if (cfg.radius.width || cfg.radius.height) {
+						if (m_msg->cx != toast_radius.x2 || m_msg->cy != toast_radius.y2) {
+							//build
+							::SetWindowRgn(hwnd, nullptr, FALSE);
+							auto tmp_rgn = ::CreateRoundRectRgn(0, 0, m_msg->cx, m_msg->cy, cfg.radius.width, cfg.radius.height);
+							if (nullptr != tmp_rgn) {
+								if (::SetWindowRgn(hwnd, tmp_rgn, TRUE)) {
+									toast_radius.x1 = m_msg->x;
+									toast_radius.y1 = m_msg->y;
+									toast_radius.x2 = m_msg->x + m_msg->cx;
+									toast_radius.y2 = m_msg->y + m_msg->cy;
+									toast_radius.w = cfg.radius.width;
+									toast_radius.h = cfg.radius.height;
+								}
+							}
+						}
+					}
 					if (!visible()) {
-						::InvalidateRect(hwnd, NULL, FALSE);
+						::InvalidateRect(hwnd, nullptr, FALSE);
+						::ShowWindow(hwnd, SW_SHOWNORMAL);
 					}
 				}
 			}
@@ -238,7 +259,7 @@ int xmstudio::toast::loop() {
 			cs.style = WS_POPUP;
 			cs.lpszName = m_p_class_name;
 			cs.lpszClass = m_p_class_name;
-			cs.dwExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW;
+			cs.dwExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT;
 			hwnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszName, cs.lpszClass, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
 			if (nullptr != hwnd) {
 				m_create = true;
@@ -339,14 +360,14 @@ void xmstudio::toast::init(const TOAST_CFG& cfg) {
 		}
 		cs.unlock();
 		_this_->cfg = cfg;
-		if (!_this_->cfg.padding) {
-			//调整窗口大小时自动若没有赋边距值，则默认为15个像素
-			_this_->cfg.padding = 10;
-		}
-		if (!_this_->cfg.spacing) {
-			//多行时的行间距
+		if (!_this_->cfg.padding)
+			_this_->cfg.padding = 20;
+		if (!_this_->cfg.spacing)
 			_this_->cfg.spacing = 5;
-		}
+		if (!_this_->cfg.radius.width)
+			_this_->cfg.radius.width = 5;
+		if (!_this_->cfg.radius.height)
+			_this_->cfg.radius.height = 5;
 		concurrency::CurrentScheduler::ScheduleTask([](void* data)->void {
 			_this_->loop();
 		}, nullptr);

@@ -37,12 +37,25 @@ namespace xmstudio {
 		HWND owner_hwnd;						//归属窗口
 	} TOAST_MSG;
 
+	typedef struct _TOAST_RADIUS_ {
+		int x1;
+		int y1;
+		int x2;
+		int y2;
+		int w;
+		int h;
+	} TOAST_RADIUS;
+
 	typedef struct _TOAST_CFG_ {
 		HINSTANCE hinstance;					//实例
 		int width;								//宽度，若为0则根据内容宽度自适应+padding	
 		int height;								//高度，若为0则根据内容宽度自适应+padding	
 		int padding;							//内容边距，仅width或height自动计算时才生效
 		int spacing;							//多行内容时的行与行之间的间距
+		struct {
+			int width;
+			int height;
+		} radius;								//圆角
 		struct {
 			int width;
 			int height;
