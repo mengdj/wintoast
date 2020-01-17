@@ -72,6 +72,9 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		::EndPaint(hwnd, &ps);
 		break;
+	case WM_ERASEBKGND:
+		return TRUE;
+		break;
 	case WM_DESTROY:
 		::PostQuitMessage(0);
 		break;
@@ -325,10 +328,10 @@ int xmstudio::toast::loop() {
 				LOGD << GetLastError();
 #endif // LOGD
 			}
+			}
 		}
-	}
 	return 0;
-}
+	}
 
 bool xmstudio::toast::release() {
 	m_create = m_nc_create = false;
