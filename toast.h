@@ -56,6 +56,7 @@ namespace xmstudio {
 		int height;								//高度，若为0则根据内容宽度自适应+padding	
 		int padding;							//内容边距，仅width或height自动计算时才生效
 		int spacing;							//多行内容时的行与行之间的间距
+		int intval;								//定时器检查间隔
 		struct {
 			int width;							//圆角宽度，默认5
 			int height;							//圆角高度，默认5
@@ -89,19 +90,19 @@ namespace xmstudio {
 		static bool show(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, Align align = Align::center, int offset_x = 0, int offset_y = 0);
 		static bool destory();
 	public:
-		HWND hwnd;
+		HWND m_hwnd;
 		concurrency::unbounded_buffer<std::shared_ptr<TOAST_MSG>> m_msg_queue;
-		TOAST_CFG cfg;
+		TOAST_CFG m_cfg;
 	protected:
 		WNDPROC m_old_proc;
 		std::shared_ptr<TOAST_MSG> m_msg;
 		const wchar_t *m_p_class_name = TEXT("xmstudio.toast");
 		bool m_nc_create;
 		bool m_create;
-		HFONT font;
-		HBRUSH brush;
+		HFONT m_font;
+		HBRUSH m_brush;
 		HBITMAP m_mem_bitmap;
-		HDC mem_dc;
+		HDC m_mem_dc;
 		int m_reg;
 	private:
 		toast();

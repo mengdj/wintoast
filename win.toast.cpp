@@ -45,11 +45,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	cfg.font.width = 0;
 	cfg.font.color = RGB(255, 255, 255);
 	cfg.font.height = 14;
-	cfg.width = 100;
-	cfg.height = 50;
+	cfg.width = 200;
+	cfg.height = 80;
 	cfg.font.name = TEXT("宋体");
 	cfg.background.alpha = 1000;
-	cfg.background.color = RGB(104, 33, 122);
+	cfg.background.color = RGB(0, 169, 73);
 	cfg.background.translate_color = 0;
 	cfg.background.translate_flags = LWA_ALPHA;
 	xmstudio::toast::init(cfg);
@@ -144,10 +144,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			xmstudio::toast::show(hWnd, TEXT("11123,停留              1\n.5秒(窗口1)\n测试性文字请勿删除测\n试性文字请勿删除测试性文字请勿删除测试性文字请勿删除测试性文字请勿删除\n\n，重要的事得说三遍记住xxA\n字测试性文字\n123测试数据\n456"), 1500, xmstudio::Align::left, 0, 0);
+			xmstudio::toast::show(hWnd, TEXT("11123,停留              1\n.5秒(窗口1)\n测试性文字请勿删除测\n试性文字请勿删除测试性文字请勿删除测试性文字请勿删除测试性文字\n\n，重要的事得说三遍记住xxA\n字测试性文字\n123测试数据\n456\n123测试数据\n123测试数据\n123测试数据"), 1500, xmstudio::Align::left, 0, 0);
 			break;
 		case IDM_EXIT:
-			xmstudio::toast::show(nullptr, TEXT("11123,停留              1\n.5秒(窗口1)\n测试性文字请勿删除测\n试性文字请勿删除测试性文字请勿删除测试性文字请勿删除测试性文字请勿删除\n\n"), 1500, xmstudio::Align::center, 0, 0);
+			xmstudio::toast::show(nullptr, TEXT("停留删除测试性文字请勿删除"), 1500, xmstudio::Align::right, 0, 0);
 			//DestroyWindow(hWnd);
 			break;
 		default:
