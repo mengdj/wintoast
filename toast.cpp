@@ -331,7 +331,7 @@ int xmstudio::toast::loop() {
 				//intval task m_cfg.intval
 				concurrency::call<int> tmp_call([this](int v) {
 					if (nullptr != m_msg) {
-						if (m_msg->dur != 0 && ms_timestamp() >= m_msg->dur && (::GetWindowLong(m_hwnd, GWL_STYLE) & WS_VISIBLE)) {
+						if (m_msg->dur != 0 && ms_timestamp() >= m_msg->dur && visible()) {
 							if (!::AnimateWindow(m_hwnd, 200, AW_HIDE | AW_ACTIVATE | AW_BLEND)) {
 								::ShowWindow(m_hwnd, SW_HIDE);
 							}
