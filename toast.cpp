@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Toast.h"
-#include <plog/Log.h>
+//#include <plog/Log.h>
 
 std::shared_ptr<xmstudio::toast> xmstudio::toast::_this_ = nullptr;
 concurrency::critical_section xmstudio::toast::cs;
@@ -8,7 +8,7 @@ concurrency::critical_section xmstudio::toast::cs;
 xmstudio::toast::toast() :m_nc_create(false), m_font(nullptr), m_mem_dc(nullptr), m_brush(nullptr), m_create(false), m_reg(0) {
 	m_msg = nullptr;
 	m_mem_bitmap = nullptr;
-	plog::init(plog::Severity::debug, "debug.txt");
+	//plog::init(plog::Severity::debug, "debug.txt");
 }
 
 xmstudio::toast::~toast() {
