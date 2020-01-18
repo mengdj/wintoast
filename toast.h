@@ -34,6 +34,7 @@ namespace xmstudio {
 		int offset_y;							//
 		int cx;
 		int cy;
+		bool hover;								//
 		Align align;							//内容水平对齐方式
 		long long dur;							//持续时间，以毫秒计算
 		std::wstring msg;						//完整的未拆分的消息

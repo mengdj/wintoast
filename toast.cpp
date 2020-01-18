@@ -1,14 +1,13 @@
 #include "stdafx.h"
 #include "Toast.h"
-//#include <plog/Log.h>
-
+#include <plog/Log.h>
 std::shared_ptr<xmstudio::toast> xmstudio::toast::_this_ = nullptr;
 concurrency::critical_section xmstudio::toast::cs;
 
 xmstudio::toast::toast() :m_nc_create(false), m_font(nullptr), m_mem_dc(nullptr), m_brush(nullptr), m_create(false), m_reg(0) {
 	m_msg = nullptr;
 	m_mem_bitmap = nullptr;
-	//plog::init(plog::Severity::debug, "debug.txt");
+	plog::init(plog::Severity::debug, "debug.txt");
 }
 
 xmstudio::toast::~toast() {
@@ -37,6 +36,8 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 	static HDC hdc;
 	static SIZE msg_size = { 0 };
 	static BITMAP compare_bitmap = { 0 };
+	static TRACKMOUSEEVENT track_mouse_event = { 0 };
+	static BOOL b_track_mouse = FALSE;
 	switch (uMsg) {
 	case WM_PAINT:
 		hdc = ::BeginPaint(m_hwnd, &ps);
@@ -102,6 +103,22 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		::EndPaint(m_hwnd, &ps);
 		break;
+	case WM_MOUSEMOVE:
+		if (!b_track_mouse) {
+			track_mouse_event.cbSize = sizeof(TRACKMOUSEEVENT);
+			track_mouse_event.dwFlags = TME_LEAVE | TME_HOVER;
+			track_mouse_event.hwndTrack = m_hwnd;
+			track_mouse_event.dwHoverTime = 10;
+			b_track_mouse = ::TrackMouseEvent(&track_mouse_event);
+		}
+		break;
+	case WM_MOUSEHOVER:
+		m_msg->hover = true;
+		break;
+	case WM_MOUSELEAVE:
+		m_msg->hover = false;
+		b_track_mouse = FALSE;
+		break;
 	case WM_ERASEBKGND:
 		return TRUE;
 		break;
@@ -134,6 +151,7 @@ bool xmstudio::toast::notify(HWND owner_m_hwnd, const wchar_t * msg, int dur, Al
 	tmp_share_ptr->msg = msg;
 	tmp_share_ptr->owner_hwnd = owner_m_hwnd;
 	tmp_share_ptr->align = align;
+	tmp_share_ptr->hover = false;
 	return concurrency::asend(m_msg_queue, std::move(tmp_share_ptr));
 }
 
@@ -223,7 +241,7 @@ void xmstudio::toast::run() {
 					if (m_cfg.radius.width || m_cfg.radius.height) {
 						if (m_msg->cx != toast_radius.x2 || m_msg->cy != toast_radius.y2) {
 							//build
-							::SetWindowRgn(m_hwnd, nullptr, FALSE);
+							::SetWindowRgn(m_hwnd, nullptr, TRUE);
 							//In particular, do not delete this region handle. The system deletes the region handle when it no longer needed.
 							auto tmp_rgn = ::CreateRoundRectRgn(0, 0, m_msg->cx, m_msg->cy, m_cfg.radius.width, m_cfg.radius.height);
 							if (nullptr != tmp_rgn) {
@@ -239,7 +257,7 @@ void xmstudio::toast::run() {
 						}
 					}
 					if (!visible()) {
-						::InvalidateRect(m_hwnd, nullptr, FALSE);
+						//::InvalidateRect(m_hwnd, nullptr, FALSE);
 						::ShowWindow(m_hwnd, SW_SHOWNORMAL);
 					}
 				}
@@ -289,7 +307,8 @@ int xmstudio::toast::loop() {
 			cs.style = WS_POPUP;
 			cs.lpszName = m_p_class_name;
 			cs.lpszClass = m_p_class_name;
-			cs.dwExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT;
+			//WS_EX_TRANSPARENT
+			cs.dwExStyle = WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
 			m_hwnd = ::CreateWindowEx(cs.dwExStyle, cs.lpszName, cs.lpszClass, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu, cs.hInstance, cs.lpCreateParams);
 			if (nullptr != m_hwnd) {
 				m_create = true;
@@ -331,7 +350,7 @@ int xmstudio::toast::loop() {
 				//intval task m_cfg.intval
 				concurrency::call<int> tmp_call([this](int v) {
 					if (nullptr != m_msg) {
-						if (m_msg->dur != 0 && ms_timestamp() >= m_msg->dur && visible()) {
+						if (!m_msg->hover&&m_msg->dur != 0 && ms_timestamp() >= m_msg->dur && visible()) {
 							if (!::AnimateWindow(m_hwnd, 200, AW_HIDE | AW_ACTIVATE | AW_BLEND)) {
 								::ShowWindow(m_hwnd, SW_HIDE);
 							}
@@ -398,7 +417,7 @@ void xmstudio::toast::init(const TOAST_CFG& m_cfg) {
 		if (!_this_->m_cfg.radius.height)
 			_this_->m_cfg.radius.height = 5;
 		if (!_this_->m_cfg.intval)
-			_this_->m_cfg.intval = 100;
+			_this_->m_cfg.intval = 90;
 		concurrency::CurrentScheduler::ScheduleTask([](void* data)->void {
 			_this_->loop();
 		}, nullptr);
