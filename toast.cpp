@@ -97,7 +97,7 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 				m_mem_dc = ::CreateCompatibleDC(hdc);
 				::SetBkMode(m_mem_dc, TRANSPARENT);
 				::SetTextColor(m_mem_dc, m_cfg.font.color);
-				::SelectObject(m_mem_dc, m_font);
+				::DeleteObject(::SelectObject(m_mem_dc, m_font));
 			}
 		}
 		::EndPaint(m_hwnd, &ps);
