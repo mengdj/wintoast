@@ -265,8 +265,9 @@ void xmstudio::toast::run() {
 					}
 					if (!visible()) {
 						//::InvalidateRect(m_hwnd, nullptr, FALSE);
-						::ShowWindow(m_hwnd, SW_SHOWNORMAL);
+						::ShowWindowAsync(m_hwnd, SW_SHOWNORMAL);
 					}
+					::SetForegroundWindow(m_hwnd);
 				}
 			}
 			msg_total_height = msg_max_width = 0;
@@ -380,9 +381,9 @@ int xmstudio::toast::loop() {
 #ifdef LOGD
 				LOGD << GetLastError();
 #endif // LOGD
-			}
 		}
 	}
+}
 	return 0;
 }
 
