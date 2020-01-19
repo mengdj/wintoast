@@ -234,6 +234,7 @@ void xmstudio::toast::run() {
 							m_msg->x += tmp_point.x >> 1;
 							m_msg->y += tmp_point.y >> 1;
 						}
+						
 					}
 					//HWND_TOPMOST
 					::SetWindowPos(m_hwnd, HWND_TOPMOST, m_msg->x, m_msg->y, m_msg->cx, m_msg->cy, SWP_SHOWWINDOW);

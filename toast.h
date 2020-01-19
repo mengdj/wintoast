@@ -27,18 +27,18 @@ namespace xmstudio {
 
 	typedef struct _TOAST_MSG_ {
 		int id;
-		bool done;
-		int x;
-		int y;
+		bool done;								//是否完成
+		int x;									//x
+		int y;									//
 		int offset_x;							//可调整位置
 		int offset_y;							//
 		int cx;
 		int cy;
-		bool hover;								//
-		Align align;							//内容水平对齐方式
+		bool hover;								//当前鼠标是否hover
+		Align align;							//内容水平对齐方式(左、右、居中)
 		long long dur;							//持续时间，以毫秒计算
 		std::wstring msg;						//完整的未拆分的消息
-		std::vector<TOAST_SHOW> multi_msg;
+		std::vector<TOAST_SHOW> multi_msg;		//多行消息时将存入此队列
 		HWND owner_hwnd;						//归属窗口
 	} TOAST_MSG;
 
@@ -57,7 +57,7 @@ namespace xmstudio {
 		int height;								//高度，若为0则根据内容宽度自适应+padding	
 		int padding;							//内容边距，仅width或height自动计算时才生效
 		int spacing;							//多行内容时的行与行之间的间距
-		int intval;								//定时器检查间隔
+		int intval;								//定时器检查间隔ms
 		struct {
 			int width;							//圆角宽度，默认5
 			int height;							//圆角高度，默认5
@@ -66,7 +66,7 @@ namespace xmstudio {
 			int width;							//字体宽度
 			int height;							//字体高度
 			COLORREF color;						//字体颜色
-			wchar_t* name;						//字体名称（需操作系统已安装的人字体）
+			wchar_t* name;						//字体名称（需操作系统已安装的字体）
 		} font;
 		struct {
 			BYTE alpha;							//透明度
