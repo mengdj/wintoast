@@ -107,6 +107,7 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 		::SendMessage(m_hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 		break;
 	case WM_LBUTTONUP:
+		hide();
 		break;
 	case WM_MOUSEMOVE:
 		if (!b_track_mouse) {
@@ -374,16 +375,16 @@ int xmstudio::toast::loop() {
 					::DispatchMessage(&msg);
 				}
 				return (int)msg.wParam;
-				}
+			}
 			else {
 #ifdef LOGD
 				LOGD << GetLastError();
 #endif // LOGD
 			}
-			}
 		}
-	return 0;
 	}
+	return 0;
+}
 
 bool xmstudio::toast::release() {
 	m_create = m_nc_create = false;
@@ -437,6 +438,20 @@ bool xmstudio::toast::show(HWND owner_m_hwnd, const wchar_t * msg, int dur, Alig
 	std::weak_ptr<xmstudio::toast> tmp_weak_toast(_this_);
 	if (!tmp_weak_toast.expired()) {
 		return tmp_weak_toast.lock()->notify(owner_m_hwnd, msg, dur, align, offset_x, offset_y);
+	}
+	return false;
+}
+
+/**
+* hide notify
+*/
+bool xmstudio::toast::hide() {
+	std::weak_ptr<xmstudio::toast> tmp_weak_toast(_this_);
+	if (!tmp_weak_toast.expired()) {
+		auto tmp_this = tmp_weak_toast.lock();
+		if (tmp_this->visible()) {
+			return ::ShowWindow(tmp_this->m_hwnd, SW_HIDE);
+		}
 	}
 	return false;
 }

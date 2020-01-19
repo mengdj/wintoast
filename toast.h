@@ -89,6 +89,7 @@ namespace xmstudio {
 		BOOL visible();
 		static void init(const TOAST_CFG& cfg);
 		static bool show(HWND owner_hwnd, const wchar_t * msg, int dur = 3000, Align align = Align::center, int offset_x = 0, int offset_y = 0);
+		static bool hide();
 		static bool destory();
 	public:
 		HWND m_hwnd;
