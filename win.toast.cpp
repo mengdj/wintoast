@@ -144,7 +144,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			xmstudio::toast::show(hWnd, TEXT("11123,停留              1\n.5秒(窗口1)\n测试性文字请勿删除测\n试性文字请勿删除测试性文字请勿删除测试性文字请勿删除测试性文字\n\n，重要的事得说三遍记住xxA\n字测试性文字\n123测试数据\n456\n123测试数据\n123测试数据\n123测试数据"), 1500, xmstudio::Align::left, 0, 0);
+			xmstudio::toast::show(hWnd, TEXT("11123,停留              1\n.5秒(窗口1)\n测试性文字请勿删除测\n试性文字请勿删除测试性文字请勿删除测试性文字请勿删除测试性文字\n\n，重要的事得说三遍记住xxA\n字测试性文字\n123测试数据\n456\n123测试数据\n123测试数据\n123测试数据"), 0, xmstudio::Align::left, 0, 0);
 			break;
 		case IDM_EXIT:
 			xmstudio::toast::show(nullptr, TEXT("停留删除测试性文字请勿删除"), 1500, xmstudio::Align::right, 0, 0);

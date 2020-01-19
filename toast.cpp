@@ -103,6 +103,11 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 		}
 		::EndPaint(m_hwnd, &ps);
 		break;
+	case WM_LBUTTONDOWN:
+		::SendMessage(m_hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
+		break;
+	case WM_LBUTTONUP:
+		break;
 	case WM_MOUSEMOVE:
 		if (!b_track_mouse) {
 			track_mouse_event.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -147,7 +152,7 @@ bool xmstudio::toast::notify(HWND owner_m_hwnd, const wchar_t * msg, int dur, Al
 	tmp_share_ptr->done = 0;
 	tmp_share_ptr->offset_x = offset_x;
 	tmp_share_ptr->offset_y = offset_y;
-	tmp_share_ptr->dur = ms_timestamp() + dur;
+	tmp_share_ptr->dur = dur ? (ms_timestamp() + dur) : 0;
 	tmp_share_ptr->msg = msg;
 	tmp_share_ptr->owner_hwnd = owner_m_hwnd;
 	tmp_share_ptr->align = align;
@@ -234,7 +239,7 @@ void xmstudio::toast::run() {
 							m_msg->x += tmp_point.x >> 1;
 							m_msg->y += tmp_point.y >> 1;
 						}
-						
+
 					}
 					//HWND_TOPMOST
 					::SetWindowPos(m_hwnd, HWND_TOPMOST, m_msg->x, m_msg->y, m_msg->cx, m_msg->cy, SWP_SHOWWINDOW);
@@ -369,16 +374,16 @@ int xmstudio::toast::loop() {
 					::DispatchMessage(&msg);
 				}
 				return (int)msg.wParam;
-			}
+				}
 			else {
 #ifdef LOGD
 				LOGD << GetLastError();
 #endif // LOGD
 			}
+			}
 		}
-	}
 	return 0;
-}
+	}
 
 bool xmstudio::toast::release() {
 	m_create = m_nc_create = false;
