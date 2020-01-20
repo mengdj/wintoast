@@ -106,9 +106,6 @@ LRESULT CALLBACK xmstudio::toast::dispatch(UINT uMsg, WPARAM wParam, LPARAM lPar
 	case WM_LBUTTONDOWN:
 		::SendMessage(m_hwnd, WM_NCLBUTTONDOWN, HTCAPTION, 0);
 		break;
-	case WM_LBUTTONUP:
-		hide();
-		break;
 	case WM_MOUSEMOVE:
 		if (!b_track_mouse) {
 			track_mouse_event.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -381,9 +378,9 @@ int xmstudio::toast::loop() {
 #ifdef LOGD
 				LOGD << GetLastError();
 #endif // LOGD
+			}
 		}
 	}
-}
 	return 0;
 }
 

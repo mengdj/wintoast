@@ -48,7 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	cfg.width = 200;
 	cfg.height = 80;
 	cfg.font.name = TEXT("ËÎÌו");
-	cfg.background.alpha = 1000;
+	cfg.background.alpha = 255;
 	cfg.background.color = RGB(0, 169, 73);
 	cfg.background.translate_color = 0;
 	cfg.background.translate_flags = LWA_ALPHA;
